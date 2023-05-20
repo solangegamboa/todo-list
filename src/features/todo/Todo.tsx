@@ -8,12 +8,6 @@ export default function Todo() {
     const todoStatus = useAppSelector(statusTodo)
     const [todoItemText, setTodoItemText] = useState('')
 
-    const handleSubmit = (e) => { 
-        e.preventDefault()
-        setTodoItemText(e.target.todoItem.value)
-        dispatch(addItem(todoItemText))
-    }
-    console.log(todoStatus)
     useEffect(() => {
         dispatch(getItems())
     }, [])
@@ -21,10 +15,10 @@ export default function Todo() {
     return (
         <div>
             <h2>Todo List</h2>
-            <form onSubmit={handleSubmit}>
                 <input type="text" id="todoItem" value={todoItemText} onChange={(e) => setTodoItemText(e.currentTarget.value)}></input>
-                <button type="submit">+</button>
-            </form>
+            <button
+                onClick={(e) => dispatch(addItem(todoItemText))}
+            >+</button>
             {(todoStatus === 'loading') ? <p>Carregando...</p> : 
             todoList && todoList.map((item, index) => {
                 return (<p key={index}>
