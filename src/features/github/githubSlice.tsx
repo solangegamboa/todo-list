@@ -17,7 +17,6 @@ await octokit.request('GET /repos/{owner}/{repo}/pulls', {
  */
 
 const OWNER = 'Henry-Schein-Brasil';
-const REPO = 'hsb-app-module-orders';
 const TOKEN = ''
 const BASE_URL = `https://api.github.com/repos/${OWNER}/`
 

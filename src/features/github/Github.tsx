@@ -16,6 +16,7 @@ export default function Github() {
         }
         getRepo()
     }, [repo])
+    
     return (
         <div>
             <h2>Github Pulls</h2>
@@ -26,6 +27,7 @@ export default function Github() {
                 <option value='hsb-app-module-product'>Products</option>
                 <option value='hsb-app-module-list'>List</option>
                 <option value='hsb-app-module-categories'>Categories</option>
+                <option value='hsb-app-dc'>Dental Cremer</option>
             </select>
             <ul>
                 {pulls.length > 0 ? pulls.map((pull, index) => {
