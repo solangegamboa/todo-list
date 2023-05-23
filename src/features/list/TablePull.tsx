@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 export default function TablePull(props: any) {
     const pulls = props.pull   
-    console.log(pulls) 
     return (
         <div className='p-2'>
             <table>
@@ -27,8 +26,8 @@ export default function TablePull(props: any) {
                             </td>
                             <td>{pull.title}</td>
                             <td>
-                            {pull.assignees.map((assignee) => {
-                               return <div className='flexBox align-center assignee'>
+                            {pull.assignees.map((assignee, indexA) => {
+                                return <div key={indexA}  className='flexBox align-center assignee'>
                                     <img className='avatar' src={assignee.avatar_url} alt="avatar"/>
                                     <span>{assignee.login}</span>
                                 </div>
@@ -36,9 +35,9 @@ export default function TablePull(props: any) {
                             }
                             </td>
                             <td className='tag'>
-                            {pull.labels.map((label) => {
+                            {pull.labels.map((label, indexL) => {
                                 const tagClass = label.name.replace(/\s/g, '');
-                                return <span className={tagClass}>{label.name}</span>
+                                return <span key={indexL} className={tagClass}>{label.name}</span>
                             })}
                             </td>
                             <td>{pull.state}</td>
