@@ -1,10 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../../store";
+import { RootState, useAppSelector } from "../../store";
 
 
 // Slice para github Token 
-const initialState = {
+type Token =  {
+    token: string | null
+}
+
+const initialState: Token = {
     token: ''
 }
 
@@ -30,6 +34,15 @@ export const selectToken = (state: RootState) => state.getToken.token
 const OWNER = 'Henry-Schein-Brasil';
 const BASE_URL = `https://api.github.com/repos/${OWNER}/`
 
+const checkToken = () => {
+    let tokenStorage = localStorage.getItem('gitAuthToken')
+    if (!tokenStorage) {
+        tokenStorage = useAppSelector(selectToken)
+    }
+
+    return tokenStorage
+}
+
 export const githubAPI = createApi({
     reducerPath: 'githubAPI',
     baseQuery: fetchBaseQuery({
@@ -44,10 +57,6 @@ export const githubAPI = createApi({
     }),
     tagTypes: ['Pulls'],
     endpoints: (builder) => ({
-        getPulls: builder.query({
-            query: () => '/hsb-app-module-ui/pulls',
-            providesTags: ['Pulls']
-        }),
         getPullsByRepo: builder.mutation({
             query: (repo) => `${repo}/pulls`,
             invalidatesTags: ['Pulls']
@@ -56,6 +65,5 @@ export const githubAPI = createApi({
 })
 
 export const {
-    useGetPullsQuery,
     useGetPullsByRepoMutation
 } = githubAPI

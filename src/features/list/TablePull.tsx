@@ -3,31 +3,31 @@ import React, { useEffect, useState } from 'react'
 export default function TablePull(props: any) {
     const pulls = props.pull
     const isFiltred = props.filterReviewed
-    const [copyPulls, setCopyPulls] = useState(pulls) 
+    const [copyPulls, setCopyPulls] = useState(pulls)
 
-    useEffect(() => {    
+    useEffect(() => {
         const filterPulls = () => {
             let filtered = []
-            pulls.filter((pull, indexP) => {
-                pull.labels.map((label) => {
-                    if (label.name && label.name !== 'reviewed hsb') {
-                        filtered.push(pulls[indexP])
-                    } else {
-                        
-                    }
-                })
+            //item => item.texts = item.texts.filter(text => text.id !== filter)
+            pulls.filter((pull) => {
+                let send = true
+                if (pull.labels) {
+                    pull.labels.find((label) => {
+                        if (label.name === 'reviewed hsb') {
+                            send = false
+                        }
+                    })
+                }
+                if (send) filtered.push(pull)
             })
-            console.log(filtered)
             setCopyPulls(filtered)
         }
-
         if (isFiltred) {
             filterPulls()
         } else {
             setCopyPulls(pulls)
         }
-
-    }, [isFiltred])
+    }, [isFiltred, pulls])
     return (
         <div className='p-2'>
             <table>
@@ -68,7 +68,7 @@ export default function TablePull(props: any) {
                                 </td>
                                 <td>{pull.state}</td>
                                 <td className='text-center'>
-                                    <a className='button button-link' href={pull.html_url}>Acessar a PR</a>
+                                    <a className='button button-link' href={pull.html_url} target='_blank'>Acessar a PR</a>
                                 </td>
                             </tr>
                         )

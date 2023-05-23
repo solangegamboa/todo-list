@@ -6,13 +6,37 @@ import { useAppSelector } from '../../store'
 
 
 export default function Github() {
+    const dispatch = useDispatch()
+
+    // Configurando Status inicial
     const [repo, setRepo] = useState('')
     const [pulls, setPulls] = useState([])
-    const [repoPulls] = useGetPullsByRepoMutation()
     const [token, setToken] = useState('')
     const [reviewedHsb, setreviewedHsb] = useState(false)
+    const [repositories] = useState([
+        { label: '--- Selecione uma opção ---', value: '' },
+        { label: 'Dental Cremer', value: 'hsb-app-dc' },
+        { label: 'Dental Speed', value: 'hsb-app-ds' },
+        { label: 'Utilidades Clínicas', value: 'hsb-app-uc' },
+        { label: 'Module Lists', value: 'hsb-app-module-lists' },
+        { label: 'Module User', value: 'hsb-app-module-user' },
+        { label: 'Module Orders', value: 'hsb-app-module-orders' },
+        { label: 'Module Products', value: 'hsb-app-module-products' },
+        { label: 'Module Checkout', value: 'hsb-app-module-checkout' },
+        { label: 'Module Widgets', value: 'hsb-app-module-widgets' },
+        { label: 'Module Categories', value: 'hsb-app-module-categories' },
+        { label: 'Module Core', value: 'hsb-app-module-core' },
+        { label: 'Module UI', value: 'hsb-app-module-ui' },
+
+    ])
+
+    // Buscando da Api as pullRequests
+    const [repoPulls, { isLoading, error }] = useGetPullsByRepoMutation()
+
+    // Buscando da API o token
     const hasToken = useAppSelector(selectToken)
-    const dispatch = useDispatch()
+
+    // Toda ao renderizar inicialmente a página e toda vez que o status de 'repo' muda
     useEffect(() => {
         const getRepo = async () => {
             const response = await repoPulls(repo)
@@ -29,8 +53,8 @@ export default function Github() {
             {hasToken &&
                 <form>
                     <button
-                    onClick={() => dispatch(logout)}
-                >Logout</button>
+                        onClick={() => dispatch(logout)}
+                    >Logout</button>
                 </form>
             }
             {!hasToken &&
@@ -48,40 +72,30 @@ export default function Github() {
                     </button>
                 </>
             }
-
             {hasToken &&
                 <>
                     <h2>Github Pulls</h2>
                     <div className='flexBox justify-between align-center p-2 w-100'>
                         <select className='select-projetc'
                             value={repo}
-                            onChange={(e) => setRepo(e.currentTarget.value)}>
-                            <option value=''>--- Selecione uma opção --- </option>
-                            <option value='hsb-app-dc'>Dental Cremer</option>
-                            <option value='hsb-app-ds'>Dental Speed</option>
-                            <option value='hsb-app-uc'>Utilidades Clínicas</option>
-                            <option value='hsb-app-module-orders'>Orders</option>
-                            <option value='hsb-app-module-product'>Products</option>
-                            <option value='hsb-app-module-checkout'>Checkout</option>
-                            <option value='hsb-app-module-products'>Products</option>
-                            <option value='hsb-app-module-widgets'>Widgets</option>
-                            <option value='hsb-app-module-core'>Core</option>
-                            <option value='hsb-app-module-ui'>UI</option>
-                            <option value='hsb-app-module-lists'>Lists</option>
-                            <option value='hsb-app-module-user'>User</option>
-                            <option value='hsb-app-module-categories'>Categories</option>
-                    </select>
-                    <input name="reviewed" type='checkbox' checked={reviewedHsb} onClick={(e) => setreviewedHsb(!reviewedHsb)} />
-                    <label htmlFor='reviewed'>Esconder Revisadas</label>
+                            onChange={(e) => setRepo(e.currentTarget.value)}
+                        >
+                            {repositories.map((repositorie, index) => {
+                                return <option key={index} value={repositorie.value}>{repositorie.label}</option>
+                            })}
+                        </select>
+                        <input name="reviewed" type='checkbox' checked={reviewedHsb} onChange={(e) => setreviewedHsb(!reviewedHsb)} />
+                        <label htmlFor='reviewed'>Esconder Revisadas</label>
                         <p>listando {pulls.length == 1 ? pulls.length + " PR aberta" : pulls.length + " PR's abertas"}</p>
                     </div>
-                {pulls.length > 0 ?
-                    <TablePull
-                        pull={pulls}
-                        filterReviewed={reviewedHsb}
-                    /> :
-                    <p>Sem PRs pendentes</p>
-                }
+                    {isLoading && <p>Carregando....</p>}
+                    {pulls.length > 0 && !isLoading &&
+                        <TablePull
+                            pull={pulls}
+                            filterReviewed={reviewedHsb}
+                        />
+                    }
+                    {error && <p>Sem PRs pendentes</p>}
                 </>
             }
         </div>
