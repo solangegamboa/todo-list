@@ -10,6 +10,7 @@ export default function Github() {
     const [pulls, setPulls] = useState([])
     const [repoPulls] = useGetPullsByRepoMutation()
     const [token, setToken] = useState('')
+    const [reviewedHsb, setreviewedHsb] = useState(false)
     const hasToken = useAppSelector(selectToken)
     const dispatch = useDispatch()
     useEffect(() => {
@@ -69,10 +70,18 @@ export default function Github() {
                             <option value='hsb-app-module-lists'>Lists</option>
                             <option value='hsb-app-module-user'>User</option>
                             <option value='hsb-app-module-categories'>Categories</option>
-                        </select>
+                    </select>
+                    <input name="reviewed" type='checkbox' checked={reviewedHsb} onClick={(e) => setreviewedHsb(!reviewedHsb)} />
+                    <label htmlFor='reviewed'>Esconder Revisadas</label>
                         <p>listando {pulls.length == 1 ? pulls.length + " PR aberta" : pulls.length + " PR's abertas"}</p>
                     </div>
-                    {pulls.length > 0 ? <TablePull pull={pulls} /> : <p>Sem PRs pendentes</p>}
+                {pulls.length > 0 ?
+                    <TablePull
+                        pull={pulls}
+                        filterReviewed={reviewedHsb}
+                    /> :
+                    <p>Sem PRs pendentes</p>
+                }
                 </>
             }
         </div>
